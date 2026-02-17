@@ -175,4 +175,6 @@ pyrightconfig.json
 
 # Data folder
 
-data/*.html
+data/html/
+data/*.db*
+data/images/
