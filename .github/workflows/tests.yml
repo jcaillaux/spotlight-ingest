@@ -24,3 +24,5 @@ jobs:
 
       - name: Run tests
         run: uv run python -m pytest -v tests
+        env:
+          SPOTLIGHT_REPO: example.com
