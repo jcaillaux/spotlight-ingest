@@ -27,34 +27,6 @@ def parse_html(html_path: Path) -> list[str]:
     return [extract_id(a['href']) for a in a_tags]
 
 
-def init_db():
-    con = duckdb.connect(metadata)
-    con.sql("""
-    CREATE TABLE IF NOT EXISTS metadata (
-        id VARCHAR PRIMARY KEY,
-        date TIMESTAMP,
-        title VARCHAR
-    );
-
-    CREATE TABLE IF NOT EXISTS images (
-        id_meta VARCHAR REFERENCES metadata(id),
-        url VARCHAR,
-        sha256 VARCHAR,
-        path VARCHAR,
-        width INTEGER,
-        height INTEGER,
-        PRIMARY KEY (id_meta, url)
-    );
-
-    CREATE TABLE IF NOT EXISTS image_tag (
-        id_meta VARCHAR REFERENCES metadata(id),
-        tag VARCHAR,
-        PRIMARY KEY (id_meta, tag)
-    );
-    """)
-    return con
-
-
 def main():
     start = perf_counter()
     htmls = sorted((DATA / 'html').glob('*.html'))
@@ -73,7 +45,7 @@ def main():
                 logger.warning(f"{html_path.name} encountered an issue: {e}")
 
     logger.info(f"Inserting {len(all_ids)} entries into database...")
-    con = init_db()
+    con = duckdb.connect(metadata)
     con.executemany(
         "INSERT INTO metadata (id) VALUES (?) ON CONFLICT DO NOTHING",
         [(id,) for id in all_ids]
