@@ -37,7 +37,8 @@ def compute_batch(model, processor, device, paths):
     images = [Image.open(p).convert("RGB") for p in paths]
     inputs = processor(images=images, return_tensors="pt", padding=True).to(device)
     with torch.no_grad():
-        features = model.get_image_features(**inputs)
+        outputs = model.get_image_features(**inputs)
+        features = outputs.pooler_output if hasattr(outputs, 'pooler_output') else outputs
         features = features / features.norm(dim=-1, keepdim=True)
     return features.cpu().numpy()
 
