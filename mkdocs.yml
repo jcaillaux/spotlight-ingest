@@ -45,6 +45,7 @@ nav:
   - Home: index.md
   - Pipeline: pipeline.md
   - Testing: testing.md
+  - CI/CD: ci.md
   - API Reference:
     - Config: api/config.md
     - Database Init: api/init_db.md
