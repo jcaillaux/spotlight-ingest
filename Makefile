@@ -1,3 +1,5 @@
+.PHONY: test init-db fetch-pages extract-metadata fetch-details download-images embeddings all docs docs-build clean
+
 test:
 	python -m pytest -v tests
 
@@ -21,6 +23,12 @@ embeddings:
 
 all:
 	dvc repro
+
+docs:
+	uv run mkdocs serve
+
+docs-build:
+	uv run mkdocs build
 
 clean:
 	rm -rf data/html/*
