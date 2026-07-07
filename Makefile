@@ -1,24 +1,27 @@
 test:
 	python -m pytest -v tests
 
-list-html:
-	python -m scripts.process_pages
+init-db:
+	dvc repro init-db
 
-repo:
-	python -m scripts.repo_access
+fetch-pages:
+	dvc repro fetch-pages
 
-img:
-	python -m scripts.download_image
+extract-metadata:
+	dvc repro extract-metadata
 
-store:
-	python -m scripts.store_image
+fetch-details:
+	dvc repro fetch-details
+
+download-images:
+	dvc repro download-images
+
+embeddings:
+	dvc repro compute-embeddings
+
+all:
+	dvc repro
 
 clean:
 	rm -rf data/html/*
-	rm data/metadata.db*
-
-all:
-	make clean
-	make repo
-	make list-html
-	make img
+	rm -f data/metadata.db*

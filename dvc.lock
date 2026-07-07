@@ -1,0 +1,111 @@
+schema: '2.0'
+stages:
+  init-db:
+    cmd: python -m scripts.init_db
+    deps:
+    - path: config.py
+      hash: md5
+      md5: 6a4f54180edcbb6e99882144efa9131d
+      size: 395
+    - path: scripts/init_db.py
+      hash: md5
+      md5: 154240114e5a0599d953c25fc648b060
+      size: 927
+    outs:
+    - path: data/metadata.db
+      hash: md5
+      md5: f025d92a0835ab2a3cb3ed679ead580a
+      size: 55848960
+  fetch-pages:
+    cmd: python -m scripts.repo_access
+    deps:
+    - path: config.py
+      hash: md5
+      md5: 6a4f54180edcbb6e99882144efa9131d
+      size: 395
+    - path: scripts/repo_access.py
+      hash: md5
+      md5: d51ae3cda80ac878c60e2775248e6c22
+      size: 2891
+    outs:
+    - path: data/html
+      hash: md5
+      md5: 140267fe94ab7a28adc14c08daa80b89.dir
+      size: 27108198
+      nfiles: 1302
+  extract-metadata:
+    cmd: python -m scripts.process_pages
+    deps:
+    - path: config.py
+      hash: md5
+      md5: 6a4f54180edcbb6e99882144efa9131d
+      size: 395
+    - path: data/html
+      hash: md5
+      md5: 140267fe94ab7a28adc14c08daa80b89.dir
+      size: 27108198
+      nfiles: 1302
+    - path: scripts/init_db.py
+      hash: md5
+      md5: 154240114e5a0599d953c25fc648b060
+      size: 927
+    - path: scripts/process_pages.py
+      hash: md5
+      md5: c66e7ce8e0fc06fca63fc70804df13b6
+      size: 1850
+  fetch-details:
+    cmd: python -m scripts.fetch_details
+    deps:
+    - path: config.py
+      hash: md5
+      md5: 6a4f54180edcbb6e99882144efa9131d
+      size: 395
+    - path: scripts/fetch_details.py
+      hash: md5
+      md5: 6a6bb2e9bdc7354639bb1d2bbc3ad877
+      size: 3459
+    - path: scripts/process_pages.py
+      hash: md5
+      md5: c66e7ce8e0fc06fca63fc70804df13b6
+      size: 1850
+  download-images:
+    cmd: python -m scripts.store_image
+    deps:
+    - path: config.py
+      hash: md5
+      md5: 6a4f54180edcbb6e99882144efa9131d
+      size: 395
+    - path: scripts/fetch_details.py
+      hash: md5
+      md5: 6a6bb2e9bdc7354639bb1d2bbc3ad877
+      size: 3459
+    - path: scripts/store_image.py
+      hash: md5
+      md5: e6f8ec2221183f1389c1664b9031330d
+      size: 2062
+    outs:
+    - path: data/images
+      hash: md5
+      md5: 9d46651a842a603e5d075d6e56feced2.dir
+      size: 8719232429
+      nfiles: 12581
+  compute-embeddings:
+    cmd: python -m scripts.compute_embeddings
+    deps:
+    - path: config.py
+      hash: md5
+      md5: 6a4f54180edcbb6e99882144efa9131d
+      size: 395
+    - path: data/images
+      hash: md5
+      md5: 9d46651a842a603e5d075d6e56feced2.dir
+      size: 8719232429
+      nfiles: 12581
+    - path: scripts/compute_embeddings.py
+      hash: md5
+      md5: cbd6c450f0a21171b36553b71b2a3aa8
+      size: 2516
+    - path: scripts/store_image.py
+      hash: md5
+      md5: e6f8ec2221183f1389c1664b9031330d
+      size: 2062

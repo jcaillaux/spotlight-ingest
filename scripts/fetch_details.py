@@ -1,8 +1,9 @@
 import duckdb
-from config import metadata, SPOTLIGHT_REPO
+from config import metadata, SPOTLIGHT_REPO, HEADERS
 from lxml import html
 import asyncio
 import aiohttp
+from time import perf_counter
 
 
 
@@ -90,26 +91,25 @@ def process_result(id, page, counter, total):
     insert_tags(id=id, tags=info['tags'])
 
 async def main():
+    start = perf_counter()
     SEM = 20
     ids = [row[0] for row in con.execute("SELECT id FROM metadata").fetchall()]
     sem = asyncio.Semaphore(SEM)
     counter = [0]
 
-    async with aiohttp.ClientSession() as session:
-        for batch_start in range(0, len(ids), SEM):
-            batch = ids[batch_start:batch_start + SEM]
-            tasks = [fetch_page(session, id, sem) for id in batch]
-            results = await asyncio.gather(*tasks, return_exceptions=True)
+    async with aiohttp.ClientSession(headers=HEADERS) as session:
+        tasks = [fetch_page(session, id, sem) for id in ids]
 
-            for result in results:
-                if isinstance(result, Exception):
-                    print(f"\nFailed: {result}")
-                else:
-                    id, page = result
-                    process_result(id, page, counter, len(ids))
+        for coro in asyncio.as_completed(tasks):
+            try:
+                id, page = await coro
+                process_result(id, page, counter, len(ids))
+            except Exception as e:
+                print(f"\nFailed: {e}")
 
         con.commit()
-        print()
+        elapsed = perf_counter() - start
+        print(f"\nFinished in {elapsed:.2f}s")
 
 
 if __name__ == "__main__":

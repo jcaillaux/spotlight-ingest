@@ -1,0 +1,48 @@
+stages:
+  init-db:
+    cmd: python -m scripts.init_db
+    deps:
+      - scripts/init_db.py
+      - config.py
+
+  fetch-pages:
+    cmd: python -m scripts.repo_access
+    deps:
+      - scripts/repo_access.py
+      - config.py
+    outs:
+      - data/html:
+          persist: true
+
+  extract-metadata:
+    cmd: python -m scripts.process_pages
+    deps:
+      - scripts/process_pages.py
+      - scripts/init_db.py
+      - config.py
+      - data/html
+
+  fetch-details:
+    cmd: python -m scripts.fetch_details
+    deps:
+      - scripts/fetch_details.py
+      - scripts/process_pages.py
+      - config.py
+
+  download-images:
+    cmd: python -m scripts.store_image
+    deps:
+      - scripts/store_image.py
+      - scripts/fetch_details.py
+      - config.py
+    outs:
+      - data/images:
+          persist: true
+
+  compute-embeddings:
+    cmd: python -m scripts.compute_embeddings
+    deps:
+      - scripts/compute_embeddings.py
+      - scripts/store_image.py
+      - config.py
+      - data/images
