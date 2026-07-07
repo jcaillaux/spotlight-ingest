@@ -15,7 +15,7 @@ store:
 
 clean:
 	rm -rf data/html/*
-	rm data/metadata.db*
+	rm -f data/metadata.db*
 
 all:
 	make clean
