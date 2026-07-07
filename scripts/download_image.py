@@ -96,17 +96,14 @@ async def main():
     counter = [0]
 
     async with aiohttp.ClientSession(headers=HEADERS) as session:
-        for batch_start in range(0, len(ids), SEM):
-            batch = ids[batch_start:batch_start + SEM]
-            tasks = [fetch_page(session, id, sem) for id in batch]
-            results = await asyncio.gather(*tasks, return_exceptions=True)
+        tasks = [fetch_page(session, id, sem) for id in ids]
 
-            for result in results:
-                if isinstance(result, Exception):
-                    print(f"\nFailed: {result}")
-                else:
-                    id, page = result
-                    process_result(id, page, counter, len(ids))
+        for coro in asyncio.as_completed(tasks):
+            try:
+                id, page = await coro
+                process_result(id, page, counter, len(ids))
+            except Exception as e:
+                print(f"\nFailed: {e}")
 
         con.commit()
         print()
