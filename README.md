@@ -5,6 +5,8 @@
 
 Data ingestion pipeline that scrapes image metadata from a Spotlight repository, stores it in a DuckDB database, downloads the images locally, and computes CLIP embeddings.
 
+**[Read the full documentation](https://jcaillaux.github.io/spotlight-ingest/)** — includes pipeline architecture, API reference, testing philosophy, and CI/CD setup.
+
 ## Requirements
 
 - Python >= 3.12
