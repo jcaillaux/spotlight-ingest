@@ -70,10 +70,11 @@ def main():
 
     logger.info(f"Inserting {len(all_ids)} entries into database...")
     con = duckdb.connect(metadata)
-    con.executemany(
-        "INSERT INTO metadata (id) VALUES (?) ON CONFLICT DO NOTHING",
-        [(id,) for id in all_ids]
-    )
+    if all_ids:
+        con.executemany(
+            "INSERT INTO metadata (id) VALUES (?) ON CONFLICT DO NOTHING",
+            [(id,) for id in all_ids]
+        )
 
     total = con.execute("SELECT COUNT(*) FROM metadata").fetchone()[0]
     elapsed = perf_counter() - start
