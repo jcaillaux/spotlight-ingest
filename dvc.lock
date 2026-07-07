@@ -68,3 +68,24 @@ stages:
       hash: md5
       md5: 6a6bb2e9bdc7354639bb1d2bbc3ad877
       size: 3459
+  download-images:
+    cmd: python -m scripts.store_image
+    deps:
+    - path: config.py
+      hash: md5
+      md5: 6a4f54180edcbb6e99882144efa9131d
+      size: 395
+    - path: data/metadata.db
+      hash: md5
+      md5: bde27c71983a557c96042c9e69b6c108
+      size: 21245952
+    - path: scripts/store_image.py
+      hash: md5
+      md5: e6f8ec2221183f1389c1664b9031330d
+      size: 2062
+    outs:
+    - path: data/images
+      hash: md5
+      md5: 1ee3e9faf3a5ba882f69885cee333697.dir
+      size: 8707800618
+      nfiles: 12567
