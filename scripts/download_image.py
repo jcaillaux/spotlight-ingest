@@ -3,6 +3,7 @@ from config import metadata, SPOTLIGHT_REPO, HEADERS
 from lxml import html
 import asyncio
 import aiohttp
+from time import perf_counter
 
 
 
@@ -90,6 +91,7 @@ def process_result(id, page, counter, total):
     insert_tags(id=id, tags=info['tags'])
 
 async def main():
+    start = perf_counter()
     SEM = 20
     ids = [row[0] for row in con.execute("SELECT id FROM metadata").fetchall()]
     sem = asyncio.Semaphore(SEM)
@@ -106,7 +108,8 @@ async def main():
                 print(f"\nFailed: {e}")
 
         con.commit()
-        print()
+        elapsed = perf_counter() - start
+        print(f"\nFinished in {elapsed:.2f}s")
 
 
 if __name__ == "__main__":

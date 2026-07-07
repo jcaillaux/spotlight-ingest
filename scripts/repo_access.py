@@ -1,5 +1,6 @@
 import asyncio
 import aiohttp
+from time import perf_counter
 from bs4 import BeautifulSoup
 from typing import Optional
 from config import SPOTLIGHT_REPO, DATA, LOGS, HEADERS
@@ -67,7 +68,7 @@ async def fetch_page(session : aiohttp.ClientSession, i:int=1) -> str:
         return html
 
 async def main():
-
+    start = perf_counter()
     i = last_page_number() + 1
     
     n_page = None
@@ -95,6 +96,8 @@ async def main():
             if i > n_page :
                 break
 
+    elapsed = perf_counter() - start
+    logger.success(f"Finished in {elapsed:.2f}s")
 
 
 if __name__ == "__main__":

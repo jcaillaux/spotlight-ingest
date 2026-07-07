@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 from pathlib import Path
 from loguru import logger
 from concurrent.futures import ProcessPoolExecutor
+from time import perf_counter
 
 import duckdb
 
@@ -55,6 +56,7 @@ def init_db():
 
 
 def main():
+    start = perf_counter()
     htmls = sorted((DATA / 'html').glob('*.html'))
     logger.info(f"Found {len(htmls)} HTML files to process")
 
@@ -78,7 +80,8 @@ def main():
     )
 
     total = con.execute("SELECT COUNT(*) FROM metadata").fetchone()[0]
-    logger.success(f"Done. {total} entries in metadata table.")
+    elapsed = perf_counter() - start
+    logger.success(f"Done. {total} entries in metadata table. Finished in {elapsed:.2f}s")
 
 
 if __name__ == '__main__':

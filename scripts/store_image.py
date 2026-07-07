@@ -1,6 +1,7 @@
 import duckdb
 import asyncio
 import aiohttp
+from time import perf_counter
 from pathlib import Path, PurePosixPath
 from urllib.parse import urlparse
 from PIL import Image
@@ -32,6 +33,7 @@ def update_image(url: str, path: str, width: int, height: int):
     )
 
 async def main():
+    start = perf_counter()
     SEM = 10
     IMG.mkdir(parents=True, exist_ok=True)
 
@@ -61,7 +63,8 @@ async def main():
                     print(f"\r{100 * count / len(urls):.2f} %\033[0K", end="", flush=True)
 
         con.commit()
-        print()
+        elapsed = perf_counter() - start
+        print(f"\nFinished in {elapsed:.2f}s")
 
 if __name__ == "__main__":
     asyncio.run(main())
