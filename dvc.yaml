@@ -26,9 +26,9 @@ stages:
       - data/metadata.db
 
   fetch-details:
-    cmd: python -m scripts.download_image
+    cmd: python -m scripts.fetch_details
     deps:
-      - scripts/download_image.py
+      - scripts/fetch_details.py
       - config.py
       - data/metadata.db
 

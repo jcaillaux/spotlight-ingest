@@ -1,0 +1,70 @@
+schema: '2.0'
+stages:
+  init-db:
+    cmd: python -m scripts.init_db
+    deps:
+    - path: config.py
+      hash: md5
+      md5: 6a4f54180edcbb6e99882144efa9131d
+      size: 395
+    - path: scripts/init_db.py
+      hash: md5
+      md5: 5313154ee2efcff651b9cfca526d9e59
+      size: 783
+    outs:
+    - path: data/metadata.db
+      hash: md5
+      md5: 2fb042bb1a0f1f16ed8304128919ea14
+      size: 21245952
+  fetch-pages:
+    cmd: python -m scripts.repo_access
+    deps:
+    - path: config.py
+      hash: md5
+      md5: 6a4f54180edcbb6e99882144efa9131d
+      size: 395
+    - path: scripts/repo_access.py
+      hash: md5
+      md5: d51ae3cda80ac878c60e2775248e6c22
+      size: 2891
+    outs:
+    - path: data/html
+      hash: md5
+      md5: e91d2d3ecf9688c83a7c494569023ee4.dir
+      size: 27108015
+      nfiles: 1302
+  extract-metadata:
+    cmd: python -m scripts.process_pages
+    deps:
+    - path: config.py
+      hash: md5
+      md5: 6a4f54180edcbb6e99882144efa9131d
+      size: 395
+    - path: data/html
+      hash: md5
+      md5: e91d2d3ecf9688c83a7c494569023ee4.dir
+      size: 27108015
+      nfiles: 1302
+    - path: data/metadata.db
+      hash: md5
+      md5: 2fb042bb1a0f1f16ed8304128919ea14
+      size: 21245952
+    - path: scripts/process_pages.py
+      hash: md5
+      md5: c66e7ce8e0fc06fca63fc70804df13b6
+      size: 1850
+  fetch-details:
+    cmd: python -m scripts.fetch_details
+    deps:
+    - path: config.py
+      hash: md5
+      md5: 6a4f54180edcbb6e99882144efa9131d
+      size: 395
+    - path: data/metadata.db
+      hash: md5
+      md5: 2fb042bb1a0f1f16ed8304128919ea14
+      size: 21245952
+    - path: scripts/fetch_details.py
+      hash: md5
+      md5: 6a6bb2e9bdc7354639bb1d2bbc3ad877
+      size: 3459

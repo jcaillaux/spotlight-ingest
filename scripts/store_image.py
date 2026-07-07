@@ -34,33 +34,28 @@ def update_image(url: str, path: str, width: int, height: int):
 
 async def main():
     start = perf_counter()
-    SEM = 10
+    SEM = 20
     IMG.mkdir(parents=True, exist_ok=True)
 
     rows = con.execute("SELECT url FROM images WHERE path IS NULL").fetchall()
     urls = [row[0] for row in rows]
     sem = asyncio.Semaphore(SEM)
     count = 0
+    total = len(urls)
 
     async with aiohttp.ClientSession(headers=HEADERS) as session:
-        for batch_start in range(0, len(urls), SEM):
-            batch = urls[batch_start:batch_start + SEM]
-            tasks = [download_image(session, url, sem) for url in batch]
-            results = await asyncio.gather(*tasks, return_exceptions=True)
+        tasks = [download_image(session, url, sem) for url in urls]
 
-            for result in results:
-                if isinstance(result, Exception):
-                    print(f"\nFailed: {result}")
-                else:
-                    url, dest = result
-                    try:
-                        width, height = get_dimensions(dest)
-                        update_image(url, dest.name, width, height)
-                    except Exception as e:
-                        print(f"\nBad image {dest.name}: {e}")
+        for coro in asyncio.as_completed(tasks):
+            try:
+                url, dest = await coro
+                width, height = get_dimensions(dest)
+                update_image(url, dest.name, width, height)
+            except Exception as e:
+                print(f"\nFailed: {e}")
 
-                    count += 1
-                    print(f"\r{100 * count / len(urls):.2f} %\033[0K", end="", flush=True)
+            count += 1
+            print(f"\r{100 * count / total:.2f} %\033[0K", end="", flush=True)
 
         con.commit()
         elapsed = perf_counter() - start

@@ -8,7 +8,7 @@ repo:
 	python -m scripts.repo_access
 
 img:
-	python -m scripts.download_image
+	python -m scripts.fetch_details
 
 store:
 	python -m scripts.store_image
