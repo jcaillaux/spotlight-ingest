@@ -1,11 +1,11 @@
 # spotlight-ingest
 
-Data ingestion pipeline that scrapes image metadata from a Spotlight repository, stores it in a DuckDB database, and downloads the images locally.
+Data ingestion pipeline that scrapes image metadata from a Spotlight repository, stores it in a DuckDB database, downloads the images locally, and computes CLIP embeddings.
 
 ## Requirements
 
 - Python >= 3.12
-- [uv](https://docs.astral.sh/uv/) (recommended)
+- [uv](https://docs.astral.sh/uv/)
 
 ## Setup
 
@@ -27,39 +27,64 @@ Run the full pipeline:
 make all
 ```
 
-Or run each step individually:
+This calls `dvc repro` under the hood, which only re-runs stages whose dependencies have changed.
 
-| Command          | Description                                      |
-|------------------|--------------------------------------------------|
-| `make repo`      | Fetch HTML listing pages from the repository     |
-| `make list-html` | Parse HTML pages and extract metadata into DuckDB|
-| `make img`       | Download images and record dimensions            |
-| `make clean`     | Remove downloaded HTML and the metadata database |
+To reset all downloaded data and the database:
 
-## Pipeline
+```bash
+make clean
+```
 
-1. **Fetch pages** (`scripts/repo_access.py`) -- Async crawl of paginated listing pages, saved as HTML files.
-2. **Extract metadata** (`scripts/process_pages.py`) -- Parse the HTML to extract entry IDs into a DuckDB `metadata` table.
-3. **Fetch details** (`scripts/download_image.py`) -- For each entry, fetch the detail page, extract title, date, tags, and image URLs with SHA-256 hashes.
-4. **Download images** (`scripts/store_image.py`) -- Download images, record file path and dimensions in the `images` table.
-
-## Testing
+Run tests:
 
 ```bash
 make test
 ```
 
+Run tests with coverage:
+
+```bash
+uv run python -m pytest --cov=scripts --cov=config --cov-report=term-missing tests
+```
+
+## Pipeline
+
+The pipeline is defined in `dvc.yaml` and has six stages:
+
+| Stage | Script | Description |
+|---|---|---|
+| `init-db` | `scripts/init_db.py` | Create the DuckDB schema (metadata, images, image_tag, embeddings) |
+| `fetch-pages` | `scripts/repo_access.py` | Async crawl of paginated listing pages, saved as HTML files |
+| `extract-metadata` | `scripts/process_pages.py` | Parse HTML pages in parallel to extract entry IDs into DuckDB |
+| `fetch-details` | `scripts/fetch_details.py` | Fetch detail pages, extract title, date, tags, and image URLs |
+| `download-images` | `scripts/store_image.py` | Download images and record file path and dimensions |
+| `compute-embeddings` | `scripts/compute_embeddings.py` | Compute CLIP embeddings (openai/clip-vit-base-patch32) |
+
+Run a single stage and its dependencies:
+
+```bash
+dvc repro <stage-name>
+```
+
 ## Project Structure
 
 ```
-config.py          # Paths and environment variables
+config.py            # Paths, env variables, shared HTTP headers
+dvc.yaml             # DVC pipeline definition
+Makefile             # Convenience targets (all, clean, test)
 scripts/
-  repo_access.py   # Async page crawler
-  process_pages.py # HTML parser -> DuckDB metadata
-  download_image.py# Detail page scraper
-  store_image.py   # Image downloader
+  init_db.py         # Database schema creation
+  repo_access.py     # Async page crawler
+  process_pages.py   # Parallel HTML parser -> DuckDB metadata
+  fetch_details.py   # Detail page scraper
+  store_image.py     # Image downloader
+  compute_embeddings.py  # CLIP embedding computation
+tests/
+  test_config.py     # Config validation
+  test_unit.py       # Unit tests (pure functions)
+  test_integration.py# Integration tests (DB, file I/O, model)
 data/
-  html/            # Cached HTML pages
-  images/          # Downloaded images
-  metadata.db      # DuckDB database
+  html/              # Cached HTML pages
+  images/            # Downloaded images
+  metadata.db        # DuckDB database
 ```
