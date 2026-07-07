@@ -9,13 +9,13 @@ stages:
       size: 395
     - path: scripts/init_db.py
       hash: md5
-      md5: 5313154ee2efcff651b9cfca526d9e59
-      size: 783
+      md5: 154240114e5a0599d953c25fc648b060
+      size: 927
     outs:
     - path: data/metadata.db
       hash: md5
-      md5: 2fb042bb1a0f1f16ed8304128919ea14
-      size: 21245952
+      md5: 63bb2feadbf9be428d2f4f2dc20eba83
+      size: 274432
   fetch-pages:
     cmd: python -m scripts.repo_access
     deps:

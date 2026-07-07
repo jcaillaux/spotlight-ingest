@@ -13,7 +13,7 @@ def main():
 
     CREATE TABLE IF NOT EXISTS images (
         id_meta VARCHAR REFERENCES metadata(id),
-        url VARCHAR,
+        url VARCHAR UNIQUE,
         sha256 VARCHAR,
         path VARCHAR,
         width INTEGER,
