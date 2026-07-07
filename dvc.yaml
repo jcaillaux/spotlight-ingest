@@ -41,3 +41,11 @@ stages:
     outs:
       - data/images:
           persist: true
+
+  compute-embeddings:
+    cmd: python -m scripts.compute_embeddings
+    deps:
+      - scripts/compute_embeddings.py
+      - config.py
+      - data/metadata.db
+      - data/images

@@ -26,6 +26,11 @@ def main():
         tag VARCHAR,
         PRIMARY KEY (id_meta, tag)
     );
+
+    CREATE TABLE IF NOT EXISTS embeddings (
+        url VARCHAR PRIMARY KEY REFERENCES images(url),
+        embedding FLOAT[512]
+    );
     """)
     con.close()
     logger.success(f"Database initialized at {metadata}")
