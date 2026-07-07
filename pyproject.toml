@@ -1,5 +1,5 @@
 [project]
-name = "transformer-vision"
+name = "spotlight-ingest"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
@@ -16,4 +16,6 @@ dependencies = [
     "pillow>=12.1.1",
     "pytest>=9.0.2",
     "python-dotenv>=1.2.1",
+    "torch>=2.10.0",
+    "transformers>=5.2.0",
 ]
