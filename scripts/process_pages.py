@@ -11,15 +11,39 @@ logger.add(LOGS / 'process_pages.log', rotation='5 MB')
 
 
 def extract_id(href):
+    """Extract the entry ID from a URL path.
+
+    Args:
+        href: The URL or path string.
+
+    Returns:
+        The last path segment as the entry ID.
+    """
     return href.rstrip('/').split('/')[-1]
 
 
 def read_html(html_path: Path) -> str:
+    """Read and return the contents of an HTML file.
+
+    Args:
+        html_path: Path to the HTML file.
+
+    Returns:
+        The file contents as a string.
+    """
     with open(html_path, "r") as f:
         return f.read()
 
 
 def parse_html(html_path: Path) -> list[str]:
+    """Parse an HTML listing page and extract all entry IDs.
+
+    Args:
+        html_path: Path to the HTML file to parse.
+
+    Returns:
+        A list of entry ID strings found on the page.
+    """
     html = read_html(html_path)
     soup = BeautifulSoup(markup=html, features='html.parser')
     main = soup.find('main')

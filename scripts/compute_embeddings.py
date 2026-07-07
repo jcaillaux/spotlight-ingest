@@ -17,6 +17,11 @@ con = duckdb.connect(metadata)
 
 
 def load_model():
+    """Load the CLIP model and processor onto the best available device.
+
+    Returns:
+        A tuple of (model, processor, device string).
+    """
     device = "cuda" if torch.cuda.is_available() else "cpu"
     logger.info(f"Using device: {device}")
     model = CLIPModel.from_pretrained(MODEL_NAME).to(device)
@@ -25,6 +30,11 @@ def load_model():
 
 
 def get_pending_images():
+    """Query the database for images that have not yet been embedded.
+
+    Returns:
+        A list of (url, path) tuples for images without embeddings.
+    """
     rows = con.execute("""
         SELECT i.url, i.path FROM images i
         LEFT JOIN embeddings e ON i.url = e.url
@@ -34,6 +44,17 @@ def get_pending_images():
 
 
 def compute_batch(model, processor, device, paths):
+    """Compute normalized CLIP embeddings for a batch of images.
+
+    Args:
+        model: The CLIP model.
+        processor: The CLIP processor.
+        device: The torch device string.
+        paths: A list of image file paths.
+
+    Returns:
+        A numpy array of normalized embedding vectors.
+    """
     images = [Image.open(p).convert("RGB") for p in paths]
     inputs = processor(images=images, return_tensors="pt", padding=True).to(device)
     with torch.no_grad():

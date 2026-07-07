@@ -10,9 +10,30 @@ from config import metadata, IMG, HEADERS
 con = duckdb.connect(metadata)
 
 def get_filename(url: str) -> str:
+    """Extract the filename from a URL.
+
+    Args:
+        url: The full URL string.
+
+    Returns:
+        The filename component of the URL path.
+    """
     return PurePosixPath(urlparse(url).path).name
 
 async def download_image(session: aiohttp.ClientSession, url: str, sem: asyncio.Semaphore) -> tuple[str, Path]:
+    """Download an image to the local image directory.
+
+    Args:
+        session: The aiohttp client session.
+        url: The image URL to download.
+        sem: Semaphore to limit concurrent downloads.
+
+    Returns:
+        A tuple of (url, destination path).
+
+    Raises:
+        aiohttp.ClientResponseError: If the HTTP request fails.
+    """
     async with sem:
         dest = IMG / get_filename(url)
         async with session.get(url) as response:
@@ -23,10 +44,26 @@ async def download_image(session: aiohttp.ClientSession, url: str, sem: asyncio.
         return url, dest
 
 def get_dimensions(path: Path) -> tuple[int, int]:
+    """Get the pixel dimensions of an image file.
+
+    Args:
+        path: Path to the image file.
+
+    Returns:
+        A tuple of (width, height).
+    """
     with Image.open(path) as img:
         return img.size  # (width, height)
 
 def update_image(url: str, path: str, width: int, height: int):
+    """Update an image record with its local path and dimensions.
+
+    Args:
+        url: The image URL (used as lookup key).
+        path: The local filename.
+        width: Image width in pixels.
+        height: Image height in pixels.
+    """
     con.execute(
         "UPDATE images SET path=?, width=?, height=? WHERE url=?",
         [path, width, height, url]
