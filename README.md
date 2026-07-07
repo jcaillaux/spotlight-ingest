@@ -1,5 +1,8 @@
 # spotlight-ingest
 
+[![Tests](https://github.com/jcaillaux/spotlight-ingest/actions/workflows/tests.yml/badge.svg)](https://github.com/jcaillaux/spotlight-ingest/actions/workflows/tests.yml)
+[![Docs](https://github.com/jcaillaux/spotlight-ingest/actions/workflows/docs.yml/badge.svg)](https://jcaillaux.github.io/spotlight-ingest/)
+
 Data ingestion pipeline that scrapes image metadata from a Spotlight repository, stores it in a DuckDB database, downloads the images locally, and computes CLIP embeddings.
 
 ## Requirements
