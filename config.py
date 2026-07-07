@@ -15,3 +15,7 @@ LOGS = ROOT / 'logs'
 metadata = DATA / "metadata.db"
 
 IMG = DATA / 'images'
+
+HEADERS = {
+    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:138.0) Gecko/20100101 Firefox/138.0"
+}

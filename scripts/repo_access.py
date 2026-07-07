@@ -2,11 +2,12 @@ import asyncio
 import aiohttp
 from bs4 import BeautifulSoup
 from typing import Optional
-from config import SPOTLIGHT_REPO, DATA, LOGS
+from config import SPOTLIGHT_REPO, DATA, LOGS, HEADERS
 from pathlib import Path
 from loguru import logger
 
 logger.add(LOGS / 'page_gathering.log', rotation='5 MB')
+
 
 def make_url(host: str, page:Optional[int]=None) -> str :
     return f"https://{host}{'/' + str(page) if page is not None else ''}"
@@ -71,7 +72,7 @@ async def main():
     
     n_page = None
 
-    async with aiohttp.ClientSession() as session : 
+    async with aiohttp.ClientSession(headers=HEADERS) as session :
         while True :
             try :
                 logger.info(f"Processing page {i}...")

@@ -4,7 +4,7 @@ import aiohttp
 from pathlib import Path, PurePosixPath
 from urllib.parse import urlparse
 from PIL import Image
-from config import metadata, IMG
+from config import metadata, IMG, HEADERS
 
 con = duckdb.connect(metadata)
 
@@ -40,7 +40,7 @@ async def main():
     sem = asyncio.Semaphore(SEM)
     count = 0
 
-    async with aiohttp.ClientSession() as session:
+    async with aiohttp.ClientSession(headers=HEADERS) as session:
         for batch_start in range(0, len(urls), SEM):
             batch = urls[batch_start:batch_start + SEM]
             tasks = [download_image(session, url, sem) for url in batch]

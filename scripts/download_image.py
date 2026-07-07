@@ -1,5 +1,5 @@
 import duckdb
-from config import metadata, SPOTLIGHT_REPO
+from config import metadata, SPOTLIGHT_REPO, HEADERS
 from lxml import html
 import asyncio
 import aiohttp
@@ -95,7 +95,7 @@ async def main():
     sem = asyncio.Semaphore(SEM)
     counter = [0]
 
-    async with aiohttp.ClientSession() as session:
+    async with aiohttp.ClientSession(headers=HEADERS) as session:
         for batch_start in range(0, len(ids), SEM):
             batch = ids[batch_start:batch_start + SEM]
             tasks = [fetch_page(session, id, sem) for id in batch]
