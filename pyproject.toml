@@ -1,10 +1,29 @@
 [project]
-name = "transformer-vision"
+name = "spotlight-ingest"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "aiohttp>=3.13.3",
+    "beautifulsoup4>=4.14.3",
+    "duckdb>=1.4.4",
+    "dvc>=3.67.1",
+    "loguru>=0.7.3",
+    "lxml>=6.0.2",
+    "numpy>=2.4.2",
+    "pandas>=3.0.0",
+    "pillow>=12.1.1",
     "pytest>=9.0.2",
+    "python-dotenv>=1.2.1",
+    "torch>=2.10.0",
+    "transformers>=5.2.0",
+]
+
+[dependency-groups]
+dev = [
+    "mkdocs>=1.6.1",
+    "mkdocs-material>=9.7.6",
+    "mkdocstrings[python]>=1.0.4",
+    "pytest-cov>=7.1.0",
 ]

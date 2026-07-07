@@ -1,0 +1,55 @@
+site_name: spotlight-ingest
+site_description: Data ingestion pipeline for Spotlight image metadata and CLIP embeddings
+repo_url: https://github.com/jcaillaux/spotlight-ingest
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - content.code.copy
+    - navigation.sections
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            docstring_style: google
+            show_source: true
+            show_root_heading: true
+            heading_level: 3
+
+markdown_extensions:
+  - pymdownx.highlight
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - admonition
+  - toc:
+      permalink: true
+
+nav:
+  - Home: index.md
+  - Pipeline: pipeline.md
+  - Testing: testing.md
+  - API Reference:
+    - Config: api/config.md
+    - Database Init: api/init_db.md
+    - Page Crawler: api/repo_access.md
+    - Metadata Extractor: api/process_pages.md
+    - Detail Scraper: api/fetch_details.md
+    - Image Downloader: api/store_image.md
+    - Embeddings: api/compute_embeddings.md
